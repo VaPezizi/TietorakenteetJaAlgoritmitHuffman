@@ -71,6 +71,7 @@ class huffmanBinaryTree{
         generateCodes(root, "");
 
         printEncoded();     //Tulostetaan muutettu Stringi
+        printCodes(root, new StringBuilder());
 
     }
 
@@ -115,6 +116,22 @@ class huffmanBinaryTree{
             }
         }
         return decodedString;
+    }
+
+    public void printCodes(Node root, StringBuilder code){
+        if(root == null)
+            return;
+        if(root.symbol != '\0'){
+            System.out.println(root.symbol + ": " + code);
+        }
+        if(root.left != null){
+            printCodes(root.left, code.append('0'));
+            code.deleteCharAt(code.length() - 1);
+        }
+        if(root.right != null){
+            printCodes(root.right, code.append('1'));
+            code.deleteCharAt(code.length() -1);
+        }
     }
 
     public void printFreqTable(){
