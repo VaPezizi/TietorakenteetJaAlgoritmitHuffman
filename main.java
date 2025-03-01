@@ -7,7 +7,6 @@ import java.util.Comparator;
 /*
  * Apuna käytetyt koodit: https://www.geeksforgeeks.org/huffman-coding-java/
  * Otin myös ohjeita Robert Laforen kirjoittamasta "Data structures & algorithms in Java 2nd edition" kirjasta. Esimerkiksi PriorityQuen käyttöön sain idean sieltä
- * Aluksi en halunnut mistään ottaa mallia, mutta jäin pahasti jumiin ja tarvitsin ideoita. 
  * 
  */
 
@@ -54,11 +53,14 @@ class huffmanBinaryTree{
         //Puun rakennus
 //------------------------------
 
+
         //Kirjassa ohjeissa oli, että tehdään erikseen jokin "tree" olio joita lisätään priority Queen, mutta "Puita":han nämä solmutkin ovat, ehkä toteutus on kirjan tekijällä,
         //                                                                                                                                      vain erilainen, en tiedä.
         while(priorityQue.size() > 1){      //Suoritetaan kunnes jono on käyty läpi (Juuri solmua lukuunottamatta)
             Node left = priorityQue.poll(); //Otetaan kaksi pienimmän painon solmua, ja lisätään ne uuden solmun lapsiksi (En ole varma onko oikeat Suomenkieliset termit, mutta menkööt) 
             Node right = priorityQue.poll();
+
+            //System.out.println("left: " + left.weight + " right: "+ right.weight);
 
             Node parent = new Node(left.weight + right.weight, '\0');   //Tässä lisäys uuteen "sisäiseen solmuun", symbooli on '\0', koska se ei esitä mitään merkkiä
             parent.left = left;
@@ -81,10 +83,11 @@ class huffmanBinaryTree{
 
     //Rekursiivinen funktio, ottaa aina solmun ja stringin, johon kasataan koodia jokaisella kierroksella rekursiota
     private void generateCodes(Node node, String code) {
-        if (node == null) return;   //Jos puu on tyhjä, poistu
+        if (node == null) return;   //Jos solmu on tyhjä
 
         if (node.left == null && node.right == null) {      //Jos käsiteltävä solmu on lehti solmu, lisätään sen koodi listaan.
             codedTable.put(node.symbol, code);
+            return;     //Lisätty myöhemmin, ihan vain optimointia varten :D
         }
 
         //System.out.println(node.symbol + " : " + code );  <- ihan mielenkiintoinen katsoa miten puuta käydään läpi :D
