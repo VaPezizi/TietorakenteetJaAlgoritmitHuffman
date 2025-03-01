@@ -1,12 +1,13 @@
 import java.util.HashMap;
 import java.util.PriorityQueue;
+import java.util.Scanner;
 import java.util.Map;
 import java.util.Comparator;
 
 /*
  * Apuna käytetyt koodit: https://www.geeksforgeeks.org/huffman-coding-java/
  * Otin myös ohjeita Robert Laforen kirjoittamasta "Data structures & algorithms in Java 2nd edition" kirjasta. Esimerkiksi PriorityQuen käyttöön sain idean sieltä
- * Aluksi en halunnut mistään ottaa mallia, mutta jäin pahasti jumiin ja tarvitsin apua. 
+ * Aluksi en halunnut mistään ottaa mallia, mutta jäin pahasti jumiin ja tarvitsin ideoita. 
  * 
  */
 
@@ -70,9 +71,12 @@ class huffmanBinaryTree{
         //Luodaan koodit, argumentiksi juurisolmu ja tyhjä stringi, johon "bitit" kasataan
         generateCodes(root, "");
 
-        printEncoded();     //Tulostetaan muutettu Stringi
-        printCodes(root, new StringBuilder());
+        
+        //printCodes(root, new StringBuilder());
 
+        //print();
+
+        //System.out.println(data);
     }
 
     //Rekursiivinen funktio, ottaa aina solmun ja stringin, johon kasataan koodia jokaisella kierroksella rekursiota
@@ -100,9 +104,6 @@ class huffmanBinaryTree{
         }
         return encodedString;
     }
-    public void printEncoded(){
-        System.out.println(encode());
-    }
 
     public String decode(String encodedString){
         Node current = root;    //Asetetaan käsiteltäväksi solmuksi juurisolmu
@@ -118,10 +119,15 @@ class huffmanBinaryTree{
         return decodedString;
     }
 
-    public void printCodes(Node root, StringBuilder code){
+    //Alkuperäinen koodien printtaus. Rekursiivinen funktio
+    //Ei ole enää tarpeellinen kun paljon helpompikin tapa printata löytyi
+    //Mutta jätinpähän nyt kommentoituna pois tämän
+    //Tämä tulee melekin suoraa Geeks For Geeksin sivulta joka on linkattuna koodin yläosassa, toisenlaisessa toteutuksessa, tämä olisi voinut olla tarpeellinen
+
+    /*public void printCodes(Node root, StringBuilder code){
         if(root == null)
             return;
-        if(root.symbol != '\0'){
+        else if(root.symbol != '\0'){
             System.out.println(root.symbol + ": " + code);
         }
         if(root.left != null){
@@ -132,23 +138,90 @@ class huffmanBinaryTree{
             printCodes(root.right, code.append('1'));
             code.deleteCharAt(code.length() -1);
         }
+    }*/
+    public void printCodes(){
+        System.out.println("\n-----( Codes )-----\n");
+        for(Map.Entry<Character, String>entry : codedTable.entrySet()){
+            Character key = entry.getKey();
+            String value = entry.getValue();
+
+            if(key.equals('\n')){
+                System.out.println("Char: " + "NL" + " Coded: " + value);
+            }else if(key.equals(' ')){
+
+                System.out.println("Char: " + "SP" + " Coded: " + value);
+            }else{
+                System.out.println("Char: " + entry.getKey() + "\tCoded: " + value);
+            }
+        }
     }
 
     public void printFreqTable(){
+        System.out.println("\n------( Frequency Table )------\n");
         for(Map.Entry<Character, Integer>entry : freqTable.entrySet()){
-            System.out.println("Key: " +entry.getKey() + "\tValue: " + entry.getValue());
+            if(entry.getKey().equals('\n')){
+                System.out.println("Key: NL" + " Value: " + entry.getValue());     //Laitoin vaan näin, että rivin vaihdon symbooli on NL
+            }else if(entry.getKey().equals(' '))
+                System.out.println("Key: SP" + " Value: " + entry.getValue());     //Sama homma tässä, mutta vain SP välilöynnille
+            else
+                System.out.println("Key: " +entry.getKey() + "\tValue: " + entry.getValue());
         }
     } 
+    //Tein nyt tämmöisen print metodin johon tulee kaikki, kun en keksinyt mikä olisi paras tapa tehdä tulostus
+    public void print(){
+        printCodes();
+        printFreqTable();
+
+        System.out.println("\n-----( Encoded )-----\n");
+        System.out.println(encode());
+
+        System.out.println("\n-----( Decoded )-----\n");
+        System.out.println(decode(encode()));
+    }
 }
 
 
 
 public class main {
     public static void main(String[] args) {
-        huffmanBinaryTree tree = new huffmanBinaryTree("SUSIE SAYS IT IS EASY");
+
+        //Tajusin äsken tässä 1.3 lauantaina, että vaatimuksissa oli käyttäjältä inputtia, niin main funktio on aika nopeasti tehty
+        //tässä jälkikäteen. Muutin myös miten arvoja printataan (Välilyönti = SP ja Rivivaihto = NL)
+
+        Scanner scanner = new Scanner(System.in);
+        StringBuilder s = new StringBuilder("");
+        System.out.print("Enter message to encode (Leave empty line to confirm and quit): ");
+        /* 
+        while (scanner.hasNextLine()) {
+            String temp = scanner.nextLine();
+            if(temp.equals("c")){
+                break;
+            }else if(temp.equals("q"))
+                return;
+            else
+                s.append(temp).append('\n');      //Vähän ikävän näköinen ratkaisu
+        }*/
+        String line;
+        while(!(line = scanner.nextLine()).isEmpty()){
+            s.append(line).append('\n');                    //Löysin paremman ratkaisun, tietenkin nyt ongelmana on, että tyhjiä rivejä ei voi koodata
+                                                            //Silti parempi, kuin että 'c\n' tai 'q\n' ei voi koodata
+        }
+        //System.out.println(s);
+        huffmanBinaryTree tree = new huffmanBinaryTree(s.toString().trim());
+        tree.print();
+
+        scanner.close();
+
+        /*System.out.println("\n-----( Encoded )-----");
+        tree.printEncoded();*/
+
+        //System.out.println("\n-----( Decoded )-----");
+        //System.out.println(tree.decode(tree.encode()));
+        /*huffmanBinaryTree tree = new huffmanBinaryTree("Morjensta pöytään Jukka");
 
         tree.printFreqTable();
         System.out.println(tree.encode());
         System.out.println(tree.decode(tree.encode()));
+        */
     } 
 }
